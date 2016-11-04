@@ -15,7 +15,7 @@ import Complex exposing (Complex)
 
 
 maxIterations =
-    100
+    200
 
 
 type alias Point =
@@ -26,6 +26,8 @@ type alias Model =
     { width : Int
     , height : Int
     , computed : Dict Point Int
+    , min : Complex
+    , max : Complex
     }
 
 
@@ -34,6 +36,8 @@ init size =
     { width = size
     , height = size
     , computed = Dict.empty |> Dict.insert ( 5, 5 ) 2
+    , min = Complex.complex -2 -1.5
+    , max = Complex.complex 1 1.5
     }
 
 
@@ -59,10 +63,17 @@ calculate maxIterations c iteration z =
 computeCell : Int -> Int -> Model -> Model
 computeCell row col model =
     let
+        colPercent =
+            toFloat col / toFloat model.width
+
+        rowPercent =
+            toFloat row / toFloat model.height
+
         c =
+            -- min + (max - min) * p
             Complex.complex
-                (2 * toFloat col / toFloat model.width)
-                (2 * toFloat row / toFloat model.height)
+                (model.min.re + (model.max.re - model.min.re) * colPercent)
+                (model.min.im + (model.max.im - model.min.im) * rowPercent)
 
         value =
             calculate maxIterations c 0 c
