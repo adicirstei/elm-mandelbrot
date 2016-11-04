@@ -9,8 +9,6 @@ module ZoomingMandelbrot
 
 import Mandelbrot
 import Html exposing (..)
-import Html.Events exposing (..)
-import Dict
 
 
 type alias Model =
@@ -31,11 +29,7 @@ update : Msg -> Model -> Model
 update msg model =
     case Debug.log "msg" msg of
         ZoomToward ( x, y ) ->
-            { model
-                | min = Mandelbrot.complexFromGridModel (x - 10) (y - 10) model
-                , max = Mandelbrot.complexFromGridModel (x + 10) (y + 10) model
-                , computed = Dict.empty
-            }
+            Mandelbrot.zoomViewport y x model
                 |> Mandelbrot.computeAll
 
 

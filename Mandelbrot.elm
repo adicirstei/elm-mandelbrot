@@ -6,7 +6,7 @@ module Mandelbrot
         , computeCell
         , computeRow
         , computeAll
-        , complexFromGridModel
+        , zoomViewport
         )
 
 import Dict exposing (Dict)
@@ -64,6 +64,24 @@ calculate maxIterations c iteration z =
             Just iteration
         else
             calculate maxIterations c (iteration + 1) z'
+
+
+zoomViewport : Int -> Int -> Model -> Model
+zoomViewport row col model =
+    let
+        focus =
+            complexFromGridModel row col model
+    in
+        { model
+            | min =
+                Complex.complex
+                    ((model.min.re + focus.re) / 2)
+                    ((model.min.im + focus.im) / 2)
+            , max =
+                Complex.complex
+                    ((model.max.re + focus.re) / 2)
+                    ((model.max.im + focus.im) / 2)
+        }
 
 
 complexFromGridModel : Int -> Int -> Model -> Complex
@@ -129,7 +147,7 @@ determineColor i =
         x =
             i % 50
     in
-        "rgb(" ++ toString (200 + x) ++ "," ++ toString (x * 2) ++ ", " ++ toString (x * 5) ++ ")"
+        "rgb(" ++ toString (100 + x) ++ ",150, " ++ toString (x * 5) ++ ")"
 
 
 viewCell : (( Int, Int ) -> msg) -> Model -> Int -> Int -> Html msg
