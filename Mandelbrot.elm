@@ -15,7 +15,7 @@ import Complex exposing (Complex)
 
 
 maxIterations =
-    200
+    100
 
 
 type alias Point =
@@ -35,7 +35,7 @@ init : Int -> Model
 init size =
     { width = size
     , height = size
-    , computed = Dict.empty |> Dict.insert ( 5, 5 ) 2
+    , computed = Dict.empty
     , min = Complex.complex -2 -1.5
     , max = Complex.complex 1 1.5
     }
@@ -114,7 +114,7 @@ determineColor i =
         x =
             i % 50
     in
-        "rgb(100," ++ toString (x * 2) ++ ", " ++ toString (x * 5) ++ ")"
+        "rgb(" ++ toString (200 + x) ++ "," ++ toString (x * 2) ++ ", " ++ toString (x * 5) ++ ")"
 
 
 viewCell : Model -> Int -> Int -> Html msg
