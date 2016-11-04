@@ -1,9 +1,21 @@
-module Mandelbrot exposing (Model, init, view, computeCell)
+module Mandelbrot
+    exposing
+        ( Model
+        , init
+        , view
+        , computeCell
+        , computeRow
+        , computeAll
+        )
 
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Complex exposing (Complex)
+
+
+maxIterations =
+    100
 
 
 type alias Point =
@@ -44,14 +56,16 @@ calculate maxIterations c iteration z =
             calculate maxIterations c (iteration + 1) z'
 
 
-computeCell : Point -> Model -> Model
-computeCell ( col, row ) model =
+computeCell : Int -> Int -> Model -> Model
+computeCell row col model =
     let
         c =
-            (Complex.complex 0 0)
+            Complex.complex
+                (2 * toFloat col / toFloat model.width)
+                (2 * toFloat row / toFloat model.height)
 
         value =
-            calculate 100 c 0 c
+            calculate maxIterations c 0 c
     in
         case value of
             Just iterations ->
@@ -59,6 +73,16 @@ computeCell ( col, row ) model =
 
             Nothing ->
                 { model | computed = Dict.remove ( col, row ) model.computed }
+
+
+computeRow : Int -> Model -> Model
+computeRow row model =
+    List.foldl (computeCell row) model [0..model.width]
+
+
+computeAll : Model -> Model
+computeAll model =
+    List.foldl computeRow model [0..model.height]
 
 
 view : Model -> Html msg
